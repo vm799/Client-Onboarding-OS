@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
 
     const results = []
 
-    for (const onboarding of onboardings) {
+    for (const onboarding of onboardings as any[]) {
       // Check if we already sent a reminder recently (within 24 hours)
       const { data: recentReminder } = await supabase
         .from('notification_logs')
@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
         })
 
         // Log the notification
-        await supabase.from('notification_logs').insert({
+        await (supabase.from('notification_logs') as any).insert({
           client_onboarding_id: onboarding.id,
           notification_type: 'reminder',
           recipient_email: client.email,

@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
 
       // Log activity
       try {
-        await supabase.from('activity_logs').insert({
+        await (supabase.from('activity_logs') as any).insert({
           workspace_id: (onboarding.flow as any)?.workspace?.id,
           client_id: onboarding.client_id,
           action: 'onboarding_completed',
