@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Log the notification
-    await supabase.from('notification_logs').insert({
+    await (supabase.from('notification_logs') as any).insert({
       client_onboarding_id: onboarding.id,
       notification_type: 'reminder',
       recipient_email: client.email,
