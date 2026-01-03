@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -258,7 +259,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                       onChange={handleLogoChange}
                     />
                     {logoPreview ? (
-                      <img src={logoPreview} alt="Logo preview" className="h-16 mx-auto rounded" />
+                      <Image src={logoPreview} alt="Logo preview" width={64} height={64} className="h-16 w-auto mx-auto rounded object-contain" />
                     ) : (
                       <>
                         <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
@@ -289,7 +290,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                 <div className="border rounded-lg p-4 bg-gray-50">
                   <div className="flex items-center gap-3 mb-4">
                     {logoPreview ? (
-                      <img src={logoPreview} alt="Logo" className="h-10 rounded" />
+                      <Image src={logoPreview} alt="Logo" width={40} height={40} className="h-10 w-auto rounded object-contain" />
                     ) : (
                       <div
                         className="w-10 h-10 rounded flex items-center justify-center text-white font-bold"
@@ -323,7 +324,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
             <div className="text-center mb-6">
               <Briefcase className="h-10 w-10 text-primary mx-auto mb-3" />
               <h2 className="text-2xl font-bold">What type of service do you offer?</h2>
-              <p className="text-muted-foreground">We'll create a starter template for you</p>
+              <p className="text-muted-foreground">We&apos;ll create a starter template for you</p>
             </div>
             <div className="grid gap-3">
               {SERVICE_TYPES.map((type) => (
@@ -367,7 +368,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
               <Check className="h-10 w-10 text-green-600" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold mb-2">You're all set! 🎉</h2>
+              <h2 className="text-2xl font-bold mb-2">You&apos;re all set!</h2>
               <p className="text-muted-foreground max-w-md mx-auto">
                 Your workspace is ready. {createSampleFlow && 'We\'ve created a starter flow for you.'}
               </p>
