@@ -34,19 +34,18 @@ export function ClientQuestions({ onboardingId, brandColor = '#000000' }: Client
   const [expanded, setExpanded] = useState(false)
 
   useEffect(() => {
+    async function loadNotes() {
+      const { data } = await supabase
+        .from('client_notes')
+        .select('*')
+        .eq('client_onboarding_id', onboardingId)
+        .order('created_at', { ascending: true })
+
+      setNotes(data || [])
+      setLoading(false)
+    }
     loadNotes()
-  }, [onboardingId])
-
-  async function loadNotes() {
-    const { data } = await supabase
-      .from('client_notes')
-      .select('*')
-      .eq('client_onboarding_id', onboardingId)
-      .order('created_at', { ascending: true })
-
-    setNotes(data || [])
-    setLoading(false)
-  }
+  }, [onboardingId, supabase])
 
   async function handleSubmitQuestion() {
     if (!newQuestion.trim()) return

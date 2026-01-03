@@ -196,7 +196,7 @@ export function ClientPortal({
                 <PartyPopper className="h-8 w-8 text-green-600" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold mb-2">You're All Set!</h2>
+                <h2 className="text-2xl font-bold mb-2">You&apos;re All Set!</h2>
                 <p className="text-muted-foreground max-w-md mx-auto">
                   Thank you for completing your onboarding. {onboarding.workspace.name} will be in touch with you soon.
                 </p>
