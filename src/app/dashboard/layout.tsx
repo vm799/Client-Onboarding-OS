@@ -28,7 +28,7 @@ export default async function DashboardLayout({
       <DashboardHeader user={user} profile={profile} />
       <div className="flex">
         <DashboardNav />
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
           {children}
         </main>
       </div>

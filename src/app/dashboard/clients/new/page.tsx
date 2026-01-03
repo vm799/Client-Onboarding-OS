@@ -16,9 +16,23 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useToast } from '@/components/ui/use-toast'
-import { ArrowLeft, Loader2, Copy, Check, Mail } from 'lucide-react'
-import { generateToken } from '@/lib/utils'
+import { ArrowLeft, Loader2, Copy, Check, Mail, Calendar, AlertTriangle } from 'lucide-react'
+import { generateToken, addDays } from '@/lib/utils'
 import type { OnboardingFlow } from '@/lib/database.types'
+
+const PRIORITY_OPTIONS = [
+  { value: 'low', label: 'Low', color: 'text-gray-600' },
+  { value: 'normal', label: 'Normal', color: 'text-blue-600' },
+  { value: 'high', label: 'High', color: 'text-orange-600' },
+  { value: 'urgent', label: 'Urgent', color: 'text-red-600' },
+]
+
+const DUE_DATE_PRESETS = [
+  { label: '3 days', days: 3 },
+  { label: '1 week', days: 7 },
+  { label: '2 weeks', days: 14 },
+  { label: '1 month', days: 30 },
+]
 
 export default function NewClientPage() {
   const router = useRouter()
@@ -34,6 +48,10 @@ export default function NewClientPage() {
   const [created, setCreated] = useState(false)
   const [onboardingLink, setOnboardingLink] = useState('')
   const [copied, setCopied] = useState(false)
+  const [priority, setPriority] = useState('normal')
+  const [dueDate, setDueDate] = useState('')
+  const [tags, setTags] = useState('')
+  const [source, setSource] = useState('')
 
   useEffect(() => {
     async function loadFlows() {
@@ -79,6 +97,12 @@ export default function NewClientPage() {
         .eq('id', user!.id)
         .single()
 
+      // Parse tags from comma-separated string
+      const parsedTags = tags
+        .split(',')
+        .map(t => t.trim())
+        .filter(t => t.length > 0)
+
       // Create client
       const { data: client, error: clientError } = await supabase
         .from('clients')
@@ -87,6 +111,8 @@ export default function NewClientPage() {
           name,
           email,
           notes: notes || null,
+          tags: parsedTags.length > 0 ? parsedTags : null,
+          source: source || null,
         })
         .select()
         .single()
@@ -103,6 +129,8 @@ export default function NewClientPage() {
             client_id: client.id,
             flow_id: flowId,
             onboarding_link_token: token,
+            priority,
+            due_date: dueDate || null,
           })
 
         if (onboardingError) throw onboardingError
@@ -296,6 +324,79 @@ export default function NewClientPage() {
               Only published flows are shown. You can assign a flow later.
             </p>
           </div>
+
+          {flowId && (
+            <>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="priority">Priority</Label>
+                  <Select value={priority} onValueChange={setPriority}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PRIORITY_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          <span className={opt.color}>{opt.label}</span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dueDate">Due Date</Label>
+                  <Input
+                    id="dueDate"
+                    type="date"
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                  />
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {DUE_DATE_PRESETS.map((preset) => (
+                  <Button
+                    key={preset.days}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const date = addDays(new Date(), preset.days)
+                      setDueDate(date.toISOString().split('T')[0])
+                    }}
+                  >
+                    {preset.label}
+                  </Button>
+                ))}
+              </div>
+            </>
+          )}
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="source">Source (optional)</Label>
+              <Input
+                id="source"
+                placeholder="e.g., Website, Referral"
+                value={source}
+                onChange={(e) => setSource(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="tags">Tags (optional)</Label>
+              <Input
+                id="tags"
+                placeholder="VIP, Enterprise, etc."
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Separate multiple tags with commas
+              </p>
+            </div>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="notes">Notes (optional)</Label>
             <Textarea
