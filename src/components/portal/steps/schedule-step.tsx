@@ -68,7 +68,7 @@ export function ScheduleStep({ stepProgress, token, onComplete }: ScheduleStepPr
           <span className="font-medium">Call scheduled</span>
         </div>
         <p className="text-sm text-muted-foreground">
-          You've confirmed that your call is scheduled.
+          You&apos;ve confirmed that your call is scheduled.
         </p>
       </div>
     )
@@ -105,11 +105,11 @@ export function ScheduleStep({ stepProgress, token, onComplete }: ScheduleStepPr
 
       <div className="border-t pt-6">
         <p className="text-sm text-muted-foreground mb-4">
-          After you've scheduled your call, click the button below to confirm and continue.
+          After you&apos;ve scheduled your call, click the button below to confirm and continue.
         </p>
         <Button onClick={handleMarkComplete} variant="outline" disabled={loading}>
           {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          I've Scheduled My Call
+          I&apos;ve Scheduled My Call
         </Button>
       </div>
     </div>

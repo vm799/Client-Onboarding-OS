@@ -182,7 +182,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
             <div>
               <h2 className="text-2xl font-bold mb-2">Welcome to Client Onboarding OS!</h2>
               <p className="text-muted-foreground max-w-md mx-auto">
-                Let's set up your workspace in under 2 minutes. Your clients will love the experience.
+                Let&apos;s set up your workspace in under 2 minutes. Your clients will love the experience.
               </p>
             </div>
             <div className="grid grid-cols-3 gap-4 pt-4">
