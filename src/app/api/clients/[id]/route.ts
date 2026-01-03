@@ -45,7 +45,7 @@ export async function PUT(
 
   try {
     const body = await request.json()
-    const { name, email, notes, tags, source } = body
+    const { name, email, notes } = body
 
     const { error } = await supabase
       .from('clients')
@@ -53,8 +53,6 @@ export async function PUT(
         name,
         email,
         notes,
-        tags,
-        source,
         updated_at: new Date().toISOString(),
       })
       .eq('id', params.id)
