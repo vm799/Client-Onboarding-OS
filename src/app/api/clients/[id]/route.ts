@@ -47,7 +47,6 @@ export async function PUT(
     const body = await request.json()
     const { name, email, notes } = body
 
-    // @ts-expect-error - Supabase types issue with update
     const { error } = await supabase
       .from('clients')
       .update({
