@@ -277,7 +277,7 @@ export default function NewClientPage() {
         <CardHeader>
           <CardTitle>Client Details</CardTitle>
           <CardDescription>
-            Enter your client's information
+            Enter your client&apos;s information
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
