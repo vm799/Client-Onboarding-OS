@@ -79,3 +79,34 @@ export function addDays(date: Date, days: number): Date {
   result.setDate(result.getDate() + days)
   return result
 }
+
+// Sanitize text to prevent XSS - escapes HTML special characters
+export function sanitizeText(text: string): string {
+  if (!text) return ''
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
+// Validate email format
+export function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
+// Generate cryptographically secure token
+export function generateSecureToken(length: number = 32): string {
+  const array = new Uint8Array(length)
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    crypto.getRandomValues(array)
+  } else {
+    // Fallback for environments without crypto
+    for (let i = 0; i < length; i++) {
+      array[i] = Math.floor(Math.random() * 256)
+    }
+  }
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('').slice(0, length)
+}
