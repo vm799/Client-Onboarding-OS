@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -170,11 +171,13 @@ export default function SettingsPage() {
             <Label htmlFor="logo">Logo</Label>
             <div className="flex items-center gap-4">
               {logoUrl ? (
-                <div className="w-16 h-16 rounded border overflow-hidden">
-                  <img
+                <div className="w-16 h-16 rounded border overflow-hidden relative">
+                  <Image
                     src={logoUrl}
                     alt="Logo"
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    unoptimized
                   />
                 </div>
               ) : (
@@ -239,11 +242,15 @@ export default function SettingsPage() {
           <div className="border rounded-lg p-4 bg-gray-50">
             <div className="flex items-center gap-3">
               {logoUrl ? (
-                <img
-                  src={logoUrl}
-                  alt="Logo preview"
-                  className="w-10 h-10 rounded object-cover"
-                />
+                <div className="w-10 h-10 rounded overflow-hidden relative">
+                  <Image
+                    src={logoUrl}
+                    alt="Logo preview"
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
               ) : (
                 <div
                   className="w-10 h-10 rounded flex items-center justify-center text-white font-bold"
