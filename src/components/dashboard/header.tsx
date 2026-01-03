@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { LogOut, Settings, User as UserIcon } from 'lucide-react'
 import type { User } from '@supabase/supabase-js'
 import type { Profile, Workspace } from '@/lib/database.types'
+import { MobileNav } from './mobile-nav'
 
 interface DashboardHeaderProps {
   user: User
@@ -38,8 +39,10 @@ export function DashboardHeader({ user, profile }: DashboardHeaderProps) {
   return (
     <header className="border-b bg-white h-16 sticky top-0 z-50">
       <div className="h-full px-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h1 className="font-semibold text-lg">Client Onboarding OS</h1>
+        <div className="flex items-center gap-2 md:gap-4">
+          <MobileNav />
+          <h1 className="font-semibold text-lg hidden sm:block">Client Onboarding OS</h1>
+          <h1 className="font-semibold text-lg sm:hidden">Onboarding OS</h1>
           {profile?.workspaces && (
             <span className="text-sm text-muted-foreground">
               {profile.workspaces.name}

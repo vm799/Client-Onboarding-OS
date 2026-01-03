@@ -17,8 +17,11 @@ import {
   Upload,
   FileCheck,
   Calendar,
+  AlertTriangle,
+  Clock,
+  Tag,
 } from 'lucide-react'
-import { formatDate, formatDateTime, calculateProgress } from '@/lib/utils'
+import { formatDate, formatDateTime, calculateProgress, getDueDateStatus, formatRelativeDate } from '@/lib/utils'
 import { CopyLinkButton } from '@/components/clients/copy-link-button'
 import { SendReminderButton } from '@/components/clients/send-reminder-button'
 import type { StepType } from '@/lib/database.types'
@@ -49,6 +52,8 @@ export default async function ClientDetailPage({
         last_activity_at,
         completed_at,
         created_at,
+        due_date,
+        priority,
         flow:onboarding_flows (
           id,
           name,
@@ -58,6 +63,7 @@ export default async function ClientDetailPage({
           id,
           status,
           completed_at,
+          due_date,
           data,
           step:onboarding_steps (
             id,
@@ -126,18 +132,60 @@ export default async function ClientDetailPage({
                       {onboarding.flow?.name || 'Onboarding Flow'}
                     </CardDescription>
                   </div>
-                  <Badge
-                    variant={
-                      onboarding.status === 'COMPLETED'
-                        ? 'success'
-                        : onboarding.status === 'IN_PROGRESS'
-                        ? 'warning'
-                        : 'secondary'
-                    }
-                  >
-                    {onboarding.status.replace('_', ' ')}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    {onboarding.priority && onboarding.priority !== 'normal' && (
+                      <Badge
+                        variant={
+                          onboarding.priority === 'urgent'
+                            ? 'destructive'
+                            : onboarding.priority === 'high'
+                            ? 'warning'
+                            : 'secondary'
+                        }
+                      >
+                        {onboarding.priority.toUpperCase()}
+                      </Badge>
+                    )}
+                    <Badge
+                      variant={
+                        onboarding.status === 'COMPLETED'
+                          ? 'success'
+                          : onboarding.status === 'IN_PROGRESS'
+                          ? 'warning'
+                          : 'secondary'
+                      }
+                    >
+                      {onboarding.status.replace('_', ' ')}
+                    </Badge>
+                  </div>
                 </div>
+                {onboarding.due_date && onboarding.status !== 'COMPLETED' && (
+                  <div className="mt-2">
+                    {(() => {
+                      const dueDateInfo = getDueDateStatus(onboarding.due_date)
+                      return (
+                        <div
+                          className={`flex items-center gap-2 text-sm ${
+                            dueDateInfo.status === 'overdue'
+                              ? 'text-red-600'
+                              : dueDateInfo.status === 'due-soon'
+                              ? 'text-orange-600'
+                              : 'text-muted-foreground'
+                          }`}
+                        >
+                          {dueDateInfo.status === 'overdue' ? (
+                            <AlertTriangle className="h-4 w-4" />
+                          ) : (
+                            <Clock className="h-4 w-4" />
+                          )}
+                          <span>
+                            Due: {formatRelativeDate(onboarding.due_date)}
+                          </span>
+                        </div>
+                      )
+                    })()}
+                  </div>
+                )}
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Progress Bar */}
@@ -247,6 +295,25 @@ export default async function ClientDetailPage({
                 <div className="text-sm text-muted-foreground">Email</div>
                 <div className="font-medium">{client.email}</div>
               </div>
+              {client.source && (
+                <div>
+                  <div className="text-sm text-muted-foreground">Source</div>
+                  <div className="font-medium">{client.source}</div>
+                </div>
+              )}
+              {client.tags && client.tags.length > 0 && (
+                <div>
+                  <div className="text-sm text-muted-foreground mb-1">Tags</div>
+                  <div className="flex flex-wrap gap-1">
+                    {client.tags.map((tag: string) => (
+                      <Badge key={tag} variant="outline" className="text-xs">
+                        <Tag className="h-3 w-3 mr-1" />
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div>
                 <div className="text-sm text-muted-foreground">Added</div>
                 <div className="font-medium">{formatDate(client.created_at)}</div>
