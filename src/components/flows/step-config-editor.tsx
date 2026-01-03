@@ -232,7 +232,7 @@ function FormFieldsEditor({
         ))}
         {fields.length === 0 && (
           <p className="text-sm text-muted-foreground text-center py-4">
-            No fields added yet. Click "Add Field" to start.
+            No fields added yet. Click &quot;Add Field&quot; to start.
           </p>
         )}
       </div>

@@ -266,7 +266,7 @@ export function FlowEditor({
                 <div className="text-center py-8 text-muted-foreground">
                   <p>No steps added yet.</p>
                   <p className="text-sm">
-                    Click "Add Step" to start building your flow.
+                    Click &quot;Add Step&quot; to start building your flow.
                   </p>
                 </div>
               ) : (
