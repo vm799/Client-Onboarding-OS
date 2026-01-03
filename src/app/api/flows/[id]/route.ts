@@ -44,8 +44,8 @@ export async function PUT(
     const { name, description, status, steps } = body
 
     // Update flow
-    const { error: flowError } = await supabase
-      .from('onboarding_flows')
+    const { error: flowError } = await (supabase
+      .from('onboarding_flows') as any)
       .update({
         name,
         description,
@@ -59,8 +59,8 @@ export async function PUT(
     // If steps provided, update them
     if (steps && Array.isArray(steps)) {
       // Delete existing steps
-      await supabase
-        .from('onboarding_steps')
+      await (supabase
+        .from('onboarding_steps') as any)
         .delete()
         .eq('flow_id', params.id)
 
@@ -75,8 +75,8 @@ export async function PUT(
           step_order: index,
         }))
 
-        const { error: stepsError } = await supabase
-          .from('onboarding_steps')
+        const { error: stepsError } = await (supabase
+          .from('onboarding_steps') as any)
           .insert(stepsToInsert)
 
         if (stepsError) throw stepsError
