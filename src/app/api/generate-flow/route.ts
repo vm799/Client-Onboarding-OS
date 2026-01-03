@@ -20,14 +20,15 @@ interface GeneratedFlow {
   steps: GeneratedStep[]
 }
 
-// Mock LLM function - replace with actual API call later
-async function generateFlowWithAI(
+// Smart template generator - analyzes service description and generates appropriate flow
+// Uses intelligent keyword matching to select and customize industry-specific templates
+async function generateFlowFromTemplate(
   serviceDescription: string,
   clientType?: string,
   tone: 'friendly' | 'formal' | 'bold' = 'friendly'
 ): Promise<GeneratedFlow> {
-  // In production, this would call OpenAI, Anthropic, or another LLM
-  // For now, we use a deterministic template based on keywords
+  // Smart template generation based on service type detection
+  // Analyzes keywords in description to select appropriate industry template
 
   const toneText = {
     friendly: {
@@ -285,7 +286,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const flow = await generateFlowWithAI(
+    const flow = await generateFlowFromTemplate(
       body.serviceDescription,
       body.clientType,
       body.tone

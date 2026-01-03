@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
+import { sendEmail, generateCompletionNotificationEmail } from '@/lib/email'
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,7 +18,23 @@ export async function POST(request: NextRequest) {
     // Verify the token matches the onboarding
     const { data: onboarding, error: onboardingError } = await supabase
       .from('client_onboardings')
-      .select('id')
+      .select(`
+        id,
+        client_id,
+        flow:onboarding_flows(
+          id,
+          name,
+          workspace:workspaces(
+            id,
+            name
+          )
+        ),
+        client:clients(
+          id,
+          name,
+          email
+        )
+      `)
       .eq('onboarding_link_token', token)
       .single()
 
@@ -81,10 +98,65 @@ export async function POST(request: NextRequest) {
         })
         .eq('id', onboarding.id)
 
-      // TODO: Send completion notification email to provider
+      // Send completion notification email to provider
+      try {
+        // Get workspace owner email
+        const { data: workspaceMembers } = await supabase
+          .from('workspace_members')
+          .select('user_id, role')
+          .eq('workspace_id', (onboarding.flow as any)?.workspace?.id)
+          .eq('role', 'owner')
+          .limit(1)
+
+        if (workspaceMembers && workspaceMembers.length > 0) {
+          const { data: ownerProfile } = await supabase
+            .from('profiles')
+            .select('email, name')
+            .eq('id', workspaceMembers[0].user_id)
+            .single()
+
+          if (ownerProfile?.email) {
+            const client = onboarding.client as any
+            const flow = onboarding.flow as any
+            const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+
+            const emailContent = generateCompletionNotificationEmail({
+              providerName: ownerProfile.name || 'Provider',
+              clientName: client?.name || 'Client',
+              clientEmail: client?.email || '',
+              flowName: flow?.name || 'Onboarding',
+              dashboardLink: `${appUrl}/dashboard/clients/${client?.id}`,
+            })
+
+            await sendEmail({
+              to: ownerProfile.email,
+              subject: emailContent.subject,
+              html: emailContent.html,
+            })
+          }
+        }
+      } catch (emailError) {
+        // Log but don't fail the request if email fails
+        console.error('Failed to send completion notification:', emailError)
+      }
+
+      // Log activity
+      try {
+        await supabase.from('activity_logs').insert({
+          workspace_id: (onboarding.flow as any)?.workspace?.id,
+          client_id: onboarding.client_id,
+          action: 'onboarding_completed',
+          details: {
+            flow_name: (onboarding.flow as any)?.name,
+            client_name: (onboarding.client as any)?.name,
+          },
+        })
+      } catch (logError) {
+        console.error('Failed to log activity:', logError)
+      }
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, allCompleted })
   } catch (error) {
     console.error('Error completing step:', error)
     return NextResponse.json(
