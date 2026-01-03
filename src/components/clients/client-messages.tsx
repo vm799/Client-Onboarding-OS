@@ -42,19 +42,18 @@ export function ClientMessages({ onboardingId, clientName }: ClientMessagesProps
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
+    async function loadNotes() {
+      const { data } = await supabase
+        .from('client_notes')
+        .select('*')
+        .eq('client_onboarding_id', onboardingId)
+        .order('created_at', { ascending: true })
+
+      setNotes(data || [])
+      setLoading(false)
+    }
     loadNotes()
-  }, [onboardingId])
-
-  async function loadNotes() {
-    const { data } = await supabase
-      .from('client_notes')
-      .select('*')
-      .eq('client_onboarding_id', onboardingId)
-      .order('created_at', { ascending: true })
-
-    setNotes(data || [])
-    setLoading(false)
-  }
+  }, [onboardingId, supabase])
 
   async function handleSendMessage() {
     if (!newMessage.trim()) return

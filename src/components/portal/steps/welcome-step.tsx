@@ -52,7 +52,7 @@ export function WelcomeStep({ stepProgress, token, onComplete }: WelcomeStepProp
   if (stepProgress.status === 'COMPLETED') {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground">You've completed this step.</p>
+        <p className="text-muted-foreground">You&apos;ve completed this step.</p>
       </div>
     )
   }

@@ -100,7 +100,7 @@ export default function Home() {
             Ready to streamline your onboarding?
           </h2>
           <p className="text-primary-foreground/80 mb-8 max-w-xl mx-auto">
-            Join hundreds of service providers who've simplified their client onboarding process.
+            Join hundreds of service providers who&apos;ve simplified their client onboarding process.
           </p>
           <Link href="/signup">
             <Button size="lg" variant="secondary" className="gap-2">
