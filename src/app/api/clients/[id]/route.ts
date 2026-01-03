@@ -54,7 +54,7 @@ export async function PUT(
         email,
         notes,
         updated_at: new Date().toISOString(),
-      })
+      } as any)
       .eq('id', params.id)
 
     if (error) throw error
