@@ -267,6 +267,14 @@ export default function SettingsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Support Policy */}
+      <div className="p-4 bg-muted/50 rounded-lg text-sm text-muted-foreground space-y-1">
+        <p className="font-medium text-foreground">Support &amp; Guarantees</p>
+        <p>📧 Email: hello@clientonboardingos.com</p>
+        <p>⏱️ Response time: 24hrs on weekdays</p>
+        <p>🛡️ 60-day money-back guarantee</p>
+      </div>
     </div>
   )
 }
