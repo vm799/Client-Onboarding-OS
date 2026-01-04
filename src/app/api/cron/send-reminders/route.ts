@@ -3,6 +3,9 @@ import { createAdminClient } from '@/lib/supabase/server'
 import { sendEmail, generateReminderEmail } from '@/lib/email'
 import { calculateProgress } from '@/lib/utils'
 
+// Force dynamic rendering - this route uses headers
+export const dynamic = 'force-dynamic'
+
 // This endpoint should be called by a cron job (e.g., Vercel Cron, GitHub Actions)
 // It sends reminder emails to clients who haven't had activity in N days
 
