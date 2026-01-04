@@ -1,13 +1,12 @@
-import { Resend } from 'resend'
+// Dynamic import to avoid build-time errors when API key is not set
+let resendClient: any = null
 
-// Lazy initialization to avoid build-time errors when API key is not set
-let resendClient: Resend | null = null
-
-function getResendClient(): Resend | null {
+async function getResendClient(): Promise<any> {
   if (!process.env.RESEND_API_KEY) {
     return null
   }
   if (!resendClient) {
+    const { Resend } = await import('resend')
     resendClient = new Resend(process.env.RESEND_API_KEY)
   }
   return resendClient
@@ -20,7 +19,7 @@ interface SendEmailParams {
 }
 
 export async function sendEmail({ to, subject, html }: SendEmailParams) {
-  const resend = getResendClient()
+  const resend = await getResendClient()
 
   // If Resend API key is not configured, log the email instead
   if (!resend) {
