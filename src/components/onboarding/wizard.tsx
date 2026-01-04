@@ -74,8 +74,8 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
     try {
       const { data: { user } } = await supabase.auth.getUser()
 
-      const { data: profile } = await supabase
-        .from('profiles')
+      const { data: profile } = await (supabase
+        .from('profiles') as any)
         .select('current_workspace_id')
         .eq('id', user!.id)
         .single()
@@ -95,8 +95,8 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
       }
 
       // Update workspace
-      await supabase
-        .from('workspaces')
+      await (supabase
+        .from('workspaces') as any)
         .update({
           name: businessName,
           brand_color: brandColor,
@@ -108,8 +108,8 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
       if (createSampleFlow && serviceType) {
         const template = getTemplateForServiceType(serviceType)
 
-        const { data: flow } = await supabase
-          .from('onboarding_flows')
+        const { data: flow } = await (supabase
+          .from('onboarding_flows') as any)
           .insert({
             workspace_id: workspaceId,
             name: template.name,
@@ -120,7 +120,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
           .single()
 
         if (flow) {
-          const stepsToInsert = template.steps.map((step, index) => ({
+          const stepsToInsert = template.steps.map((step: any, index: number) => ({
             flow_id: flow.id,
             step_order: index,
             type: step.type,
@@ -129,13 +129,13 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
             config: step.config,
           }))
 
-          await supabase.from('onboarding_steps').insert(stepsToInsert)
+          await (supabase.from('onboarding_steps') as any).insert(stepsToInsert)
         }
       }
 
       // Mark onboarding as complete in user profile
-      await supabase
-        .from('profiles')
+      await (supabase
+        .from('profiles') as any)
         .update({ onboarding_completed: true })
         .eq('id', user!.id)
 

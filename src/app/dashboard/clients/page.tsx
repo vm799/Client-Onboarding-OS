@@ -27,16 +27,16 @@ export default async function ClientsPage() {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: profile } = await supabase
-    .from('profiles')
+  const { data: profile } = await (supabase
+    .from('profiles') as any)
     .select('current_workspace_id')
     .eq('id', user!.id)
     .single()
 
   const workspaceId = profile?.current_workspace_id
 
-  const { data: clients } = await supabase
-    .from('clients')
+  const { data: clients } = await (supabase
+    .from('clients') as any)
     .select(`
       *,
       client_onboardings (
@@ -87,7 +87,7 @@ export default async function ClientsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {clients.map((client) => {
+              {clients.map((client: any) => {
                 const onboarding = client.client_onboardings?.[0]
                 const progress = onboarding?.step_progress
                   ? calculateProgress(onboarding.step_progress)

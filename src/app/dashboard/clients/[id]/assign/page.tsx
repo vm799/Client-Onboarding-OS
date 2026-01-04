@@ -57,15 +57,15 @@ export default function AssignFlowPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
-      const { data: profile } = await supabase
-        .from('profiles')
+      const { data: profile } = await (supabase
+        .from('profiles') as any)
         .select('current_workspace_id')
         .eq('id', user.id)
         .single()
 
       // Load client
-      const { data: clientData } = await supabase
-        .from('clients')
+      const { data: clientData } = await (supabase
+        .from('clients') as any)
         .select('*')
         .eq('id', clientId)
         .single()
@@ -73,8 +73,8 @@ export default function AssignFlowPage() {
       setClient(clientData)
 
       // Load flows
-      const { data: flowsData } = await supabase
-        .from('onboarding_flows')
+      const { data: flowsData } = await (supabase
+        .from('onboarding_flows') as any)
         .select('*')
         .eq('workspace_id', profile!.current_workspace_id!)
         .eq('status', 'published')
@@ -101,8 +101,8 @@ export default function AssignFlowPage() {
     try {
       const token = generateToken(32)
 
-      const { error } = await supabase
-        .from('client_onboardings')
+      const { error } = await (supabase
+        .from('client_onboardings') as any)
         .insert({
           client_id: clientId,
           flow_id: flowId,

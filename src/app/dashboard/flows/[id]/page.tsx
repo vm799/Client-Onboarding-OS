@@ -30,8 +30,8 @@ export default function EditFlowPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     async function loadFlow() {
-      const { data: flow, error } = await supabase
-        .from('onboarding_flows')
+      const { data: flow, error } = await (supabase
+        .from('onboarding_flows') as any)
         .select(`
           *,
           steps:onboarding_steps(*)
@@ -83,8 +83,8 @@ export default function EditFlowPage({ params }: { params: { id: string } }) {
 
     try {
       // Update the flow
-      const { error: flowError } = await supabase
-        .from('onboarding_flows')
+      const { error: flowError } = await (supabase
+        .from('onboarding_flows') as any)
         .update({
           name: flowName,
           description: flowDescription,
@@ -95,19 +95,19 @@ export default function EditFlowPage({ params }: { params: { id: string } }) {
       if (flowError) throw flowError
 
       // Get existing steps
-      const { data: existingSteps } = await supabase
-        .from('onboarding_steps')
+      const { data: existingSteps } = await (supabase
+        .from('onboarding_steps') as any)
         .select('id')
         .eq('flow_id', params.id)
 
-      const existingIds = existingSteps?.map((s) => s.id) || []
+      const existingIds = existingSteps?.map((s: any) => s.id) || []
       const currentIds = steps.map((s) => s.id)
 
       // Delete removed steps
-      const toDelete = existingIds.filter((id) => !currentIds.includes(id))
+      const toDelete = existingIds.filter((id: any) => !currentIds.includes(id))
       if (toDelete.length > 0) {
-        await supabase
-          .from('onboarding_steps')
+        await (supabase
+          .from('onboarding_steps') as any)
           .delete()
           .in('id', toDelete)
       }
@@ -125,12 +125,12 @@ export default function EditFlowPage({ params }: { params: { id: string } }) {
         }
 
         if (existingIds.includes(step.id)) {
-          await supabase
-            .from('onboarding_steps')
+          await (supabase
+            .from('onboarding_steps') as any)
             .update(stepData)
             .eq('id', step.id)
         } else {
-          await supabase.from('onboarding_steps').insert(stepData)
+          await (supabase.from('onboarding_steps') as any).insert(stepData)
         }
       }
 

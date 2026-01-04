@@ -48,8 +48,8 @@ export default async function ClientOnboardingPage({
   const supabase = createAdminClient()
 
   // Fetch the onboarding data using the token
-  const { data: onboarding, error } = await supabase
-    .from('client_onboardings')
+  const { data: onboarding, error } = await (supabase
+    .from('client_onboardings') as any)
     .select(`
       id,
       status,

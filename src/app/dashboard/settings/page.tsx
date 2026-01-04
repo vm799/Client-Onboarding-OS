@@ -26,14 +26,14 @@ export default function SettingsPage() {
     async function loadWorkspace() {
       const { data: { user } } = await supabase.auth.getUser()
 
-      const { data: profile } = await supabase
-        .from('profiles')
+      const { data: profile } = await (supabase
+        .from('profiles') as any)
         .select('current_workspace_id')
         .eq('id', user!.id)
         .single()
 
-      const { data: workspaceData } = await supabase
-        .from('workspaces')
+      const { data: workspaceData } = await (supabase
+        .from('workspaces') as any)
         .select('*')
         .eq('id', profile!.current_workspace_id!)
         .single()
@@ -105,8 +105,8 @@ export default function SettingsPage() {
 
     setSaving(true)
     try {
-      const { error } = await supabase
-        .from('workspaces')
+      const { error } = await (supabase
+        .from('workspaces') as any)
         .update({
           name,
           brand_color: brandColor,

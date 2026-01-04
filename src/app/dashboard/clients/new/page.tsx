@@ -57,14 +57,14 @@ export default function NewClientPage() {
     async function loadFlows() {
       const { data: { user } } = await supabase.auth.getUser()
 
-      const { data: profile } = await supabase
-        .from('profiles')
+      const { data: profile } = await (supabase
+        .from('profiles') as any)
         .select('current_workspace_id')
         .eq('id', user!.id)
         .single()
 
-      const { data } = await supabase
-        .from('onboarding_flows')
+      const { data } = await (supabase
+        .from('onboarding_flows') as any)
         .select('*')
         .eq('workspace_id', profile!.current_workspace_id!)
         .eq('status', 'published')
@@ -91,8 +91,8 @@ export default function NewClientPage() {
     try {
       const { data: { user } } = await supabase.auth.getUser()
 
-      const { data: profile } = await supabase
-        .from('profiles')
+      const { data: profile } = await (supabase
+        .from('profiles') as any)
         .select('current_workspace_id')
         .eq('id', user!.id)
         .single()
@@ -104,8 +104,8 @@ export default function NewClientPage() {
         .filter(t => t.length > 0)
 
       // Create client
-      const { data: client, error: clientError } = await supabase
-        .from('clients')
+      const { data: client, error: clientError } = await (supabase
+        .from('clients') as any)
         .insert({
           workspace_id: profile!.current_workspace_id!,
           name,
@@ -123,8 +123,8 @@ export default function NewClientPage() {
       if (flowId) {
         const token = generateToken(32)
 
-        const { error: onboardingError } = await supabase
-          .from('client_onboardings')
+        const { error: onboardingError } = await (supabase
+          .from('client_onboardings') as any)
           .insert({
             client_id: client.id,
             flow_id: flowId,

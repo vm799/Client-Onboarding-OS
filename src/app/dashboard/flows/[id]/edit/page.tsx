@@ -32,8 +32,8 @@ export default function EditFlowPage() {
 
   useEffect(() => {
     async function loadFlow() {
-      const { data: flow, error } = await supabase
-        .from('onboarding_flows')
+      const { data: flow, error } = await (supabase
+        .from('onboarding_flows') as any)
         .select(`
           *,
           steps:onboarding_steps(*)

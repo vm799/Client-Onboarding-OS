@@ -514,15 +514,15 @@ export default function TemplatesPage() {
     try {
       const { data: { user } } = await supabase.auth.getUser()
 
-      const { data: profile } = await supabase
-        .from('profiles')
+      const { data: profile } = await (supabase
+        .from('profiles') as any)
         .select('current_workspace_id')
         .eq('id', user!.id)
         .single()
 
       // Create the flow from template
-      const { data: flow, error } = await supabase
-        .from('onboarding_flows')
+      const { data: flow, error } = await (supabase
+        .from('onboarding_flows') as any)
         .insert({
           workspace_id: profile!.current_workspace_id!,
           name: template.template.name,
@@ -544,7 +544,7 @@ export default function TemplatesPage() {
         config: step.config,
       }))
 
-      await supabase.from('onboarding_steps').insert(stepsToInsert)
+      await (supabase.from('onboarding_steps') as any).insert(stepsToInsert)
 
       toast({
         title: 'Template Applied!',
@@ -564,7 +564,7 @@ export default function TemplatesPage() {
     }
   }
 
-  const categories = [...new Set(TEMPLATES.map(t => t.category))]
+  const categories = Array.from(new Set(TEMPLATES.map(t => t.category)))
 
   return (
     <div className="space-y-8">

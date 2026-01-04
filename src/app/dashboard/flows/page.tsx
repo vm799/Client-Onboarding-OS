@@ -18,16 +18,16 @@ export default async function FlowsPage() {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: profile } = await supabase
-    .from('profiles')
+  const { data: profile } = await (supabase
+    .from('profiles') as any)
     .select('current_workspace_id')
     .eq('id', user!.id)
     .single()
 
   const workspaceId = profile?.current_workspace_id
 
-  const { data: flows } = await supabase
-    .from('onboarding_flows')
+  const { data: flows } = await (supabase
+    .from('onboarding_flows') as any)
     .select(`
       *,
       steps:onboarding_steps(id)
@@ -62,7 +62,7 @@ export default async function FlowsPage() {
 
       {flows && flows.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {flows.map((flow) => (
+          {flows.map((flow: any) => (
             <Card key={flow.id} className="hover:shadow-md transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
