@@ -43,8 +43,8 @@ export function ClientMessages({ onboardingId, clientName }: ClientMessagesProps
 
   useEffect(() => {
     async function loadNotes() {
-      const { data } = await supabase
-        .from('client_notes')
+      const { data } = await (supabase
+        .from('client_notes') as any)
         .select('*')
         .eq('client_onboarding_id', onboardingId)
         .order('created_at', { ascending: true })
@@ -60,8 +60,8 @@ export function ClientMessages({ onboardingId, clientName }: ClientMessagesProps
 
     setSubmitting(true)
     try {
-      const { data, error } = await supabase
-        .from('client_notes')
+      const { data, error } = await (supabase
+        .from('client_notes') as any)
         .insert({
           client_onboarding_id: onboardingId,
           content: newMessage,
@@ -91,8 +91,8 @@ export function ClientMessages({ onboardingId, clientName }: ClientMessagesProps
   }
 
   async function handleMarkResolved(noteId: string) {
-    const { error } = await supabase
-      .from('client_notes')
+    const { error } = await (supabase
+      .from('client_notes') as any)
       .update({ is_resolved: true })
       .eq('id', noteId)
 

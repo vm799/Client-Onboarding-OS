@@ -35,8 +35,8 @@ export function ClientQuestions({ onboardingId, brandColor = '#000000' }: Client
 
   useEffect(() => {
     async function loadNotes() {
-      const { data } = await supabase
-        .from('client_notes')
+      const { data } = await (supabase
+        .from('client_notes') as any)
         .select('*')
         .eq('client_onboarding_id', onboardingId)
         .order('created_at', { ascending: true })
@@ -52,8 +52,8 @@ export function ClientQuestions({ onboardingId, brandColor = '#000000' }: Client
 
     setSubmitting(true)
     try {
-      const { data, error } = await supabase
-        .from('client_notes')
+      const { data, error } = await (supabase
+        .from('client_notes') as any)
         .insert({
           client_onboarding_id: onboardingId,
           content: newQuestion,

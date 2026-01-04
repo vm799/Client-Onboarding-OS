@@ -18,8 +18,8 @@ export default async function AnalyticsPage() {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: profile } = await supabase
-    .from('profiles')
+  const { data: profile } = await (supabase
+    .from('profiles') as any)
     .select('current_workspace_id')
     .eq('id', user!.id)
     .single()
@@ -27,8 +27,8 @@ export default async function AnalyticsPage() {
   const workspaceId = profile?.current_workspace_id
 
   // Get all onboardings for analytics
-  const { data: onboardings } = await supabase
-    .from('client_onboardings')
+  const { data: onboardings } = await (supabase
+    .from('client_onboardings') as any)
     .select(`
       id,
       status,
@@ -53,19 +53,19 @@ export default async function AnalyticsPage() {
 
   // Calculate metrics
   const totalOnboardings = onboardings?.length || 0
-  const completedOnboardings = onboardings?.filter(o => o.status === 'COMPLETED').length || 0
-  const inProgressOnboardings = onboardings?.filter(o => o.status === 'IN_PROGRESS').length || 0
-  const notStartedOnboardings = onboardings?.filter(o => o.status === 'NOT_STARTED').length || 0
+  const completedOnboardings = onboardings?.filter((o: any) => o.status === 'COMPLETED').length || 0
+  const inProgressOnboardings = onboardings?.filter((o: any) => o.status === 'IN_PROGRESS').length || 0
+  const notStartedOnboardings = onboardings?.filter((o: any) => o.status === 'NOT_STARTED').length || 0
 
   const completionRate = totalOnboardings > 0
     ? Math.round((completedOnboardings / totalOnboardings) * 100)
     : 0
 
   // Calculate average completion time (in days)
-  const completedWithDates = onboardings?.filter(o => o.completed_at && o.created_at) || []
+  const completedWithDates = onboardings?.filter((o: any) => o.completed_at && o.created_at) || []
   const avgCompletionDays = completedWithDates.length > 0
     ? Math.round(
-        completedWithDates.reduce((sum, o) => {
+        completedWithDates.reduce((sum: number, o: any) => {
           const start = new Date(o.created_at).getTime()
           const end = new Date(o.completed_at!).getTime()
           return sum + (end - start) / (1000 * 60 * 60 * 24)
@@ -75,7 +75,7 @@ export default async function AnalyticsPage() {
 
   // Calculate step drop-off rates
   const stepStats: Record<string, { total: number; completed: number }> = {}
-  onboardings?.forEach(o => {
+  onboardings?.forEach((o: any) => {
     o.step_progress?.forEach((sp: any) => {
       const stepType = sp.step?.type || 'UNKNOWN'
       if (!stepStats[stepType]) {
@@ -101,7 +101,7 @@ export default async function AnalyticsPage() {
   // Calculate stalled onboardings (no activity in 7+ days)
   const sevenDaysAgo = new Date()
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-  const stalledOnboardings = onboardings?.filter(o =>
+  const stalledOnboardings = onboardings?.filter((o: any) =>
     o.status === 'IN_PROGRESS' &&
     o.last_activity_at &&
     new Date(o.last_activity_at) < sevenDaysAgo

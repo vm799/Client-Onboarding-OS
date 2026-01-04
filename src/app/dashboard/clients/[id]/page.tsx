@@ -41,8 +41,8 @@ export default async function ClientDetailPage({
 }) {
   const supabase = createClient()
 
-  const { data: client, error } = await supabase
-    .from('clients')
+  const { data: client, error } = await (supabase
+    .from('clients') as any)
     .select(`
       *,
       client_onboardings (

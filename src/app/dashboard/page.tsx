@@ -13,8 +13,8 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   // Get user's workspace
-  const { data: profile } = await supabase
-    .from('profiles')
+  const { data: profile } = await (supabase
+    .from('profiles') as any)
     .select('current_workspace_id')
     .eq('id', user!.id)
     .single()
@@ -22,20 +22,20 @@ export default async function DashboardPage() {
   const workspaceId = profile?.current_workspace_id
 
   // Get flows count
-  const { count: flowsCount } = await supabase
-    .from('onboarding_flows')
+  const { count: flowsCount } = await (supabase
+    .from('onboarding_flows') as any)
     .select('*', { count: 'exact', head: true })
     .eq('workspace_id', workspaceId!)
 
   // Get clients count
-  const { count: clientsCount } = await supabase
-    .from('clients')
+  const { count: clientsCount } = await (supabase
+    .from('clients') as any)
     .select('*', { count: 'exact', head: true })
     .eq('workspace_id', workspaceId!)
 
   // Get recent clients with onboarding progress
-  const { data: recentClients } = await supabase
-    .from('clients')
+  const { data: recentClients } = await (supabase
+    .from('clients') as any)
     .select(`
       *,
       client_onboardings (
@@ -56,8 +56,8 @@ export default async function DashboardPage() {
     .limit(5)
 
   // Get active onboardings count
-  const { count: activeOnboardingsCount } = await supabase
-    .from('client_onboardings')
+  const { count: activeOnboardingsCount } = await (supabase
+    .from('client_onboardings') as any)
     .select('*, clients!inner(*)', { count: 'exact', head: true })
     .eq('clients.workspace_id', workspaceId!)
     .eq('status', 'IN_PROGRESS')
@@ -147,7 +147,7 @@ export default async function DashboardPage() {
         <CardContent>
           {recentClients && recentClients.length > 0 ? (
             <div className="space-y-4">
-              {recentClients.map((client) => {
+              {recentClients.map((client: any) => {
                 const onboarding = client.client_onboardings?.[0]
                 const progress = onboarding?.step_progress
                   ? calculateProgress(onboarding.step_progress)

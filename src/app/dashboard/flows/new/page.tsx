@@ -41,15 +41,15 @@ export default function NewFlowPage() {
     try {
       const { data: { user } } = await supabase.auth.getUser()
 
-      const { data: profile } = await supabase
-        .from('profiles')
+      const { data: profile } = await (supabase
+        .from('profiles') as any)
         .select('current_workspace_id')
         .eq('id', user!.id)
         .single()
 
       // Create the flow
-      const { data: flow, error: flowError } = await supabase
-        .from('onboarding_flows')
+      const { data: flow, error: flowError } = await (supabase
+        .from('onboarding_flows') as any)
         .insert({
           workspace_id: profile!.current_workspace_id!,
           name: flowName,
@@ -72,8 +72,8 @@ export default function NewFlowPage() {
           config: step.config,
         }))
 
-        const { error: stepsError } = await supabase
-          .from('onboarding_steps')
+        const { error: stepsError } = await (supabase
+          .from('onboarding_steps') as any)
           .insert(stepsToInsert)
 
         if (stepsError) throw stepsError
