@@ -12,26 +12,43 @@ export default async function DashboardPage() {
 
   const { data: { user } } = await supabase.auth.getUser()
 
+  if (!user) {
+    return (
+      <div className="text-center py-12">
+        <p>Please log in to view your dashboard.</p>
+      </div>
+    )
+  }
+
   // Get user's workspace
   const { data: profile } = await (supabase
     .from('profiles') as any)
     .select('current_workspace_id')
-    .eq('id', user!.id)
+    .eq('id', user.id)
     .single()
 
   const workspaceId = profile?.current_workspace_id
+
+  if (!workspaceId) {
+    return (
+      <div className="text-center py-12">
+        <h2 className="text-xl font-semibold mb-2">Setting up your workspace...</h2>
+        <p className="text-muted-foreground">Please refresh the page in a moment.</p>
+      </div>
+    )
+  }
 
   // Get flows count
   const { count: flowsCount } = await (supabase
     .from('onboarding_flows') as any)
     .select('*', { count: 'exact', head: true })
-    .eq('workspace_id', workspaceId!)
+    .eq('workspace_id', workspaceId)
 
   // Get clients count
   const { count: clientsCount } = await (supabase
     .from('clients') as any)
     .select('*', { count: 'exact', head: true })
-    .eq('workspace_id', workspaceId!)
+    .eq('workspace_id', workspaceId)
 
   // Get recent clients with onboarding progress
   const { data: recentClients } = await (supabase
@@ -51,7 +68,7 @@ export default async function DashboardPage() {
         )
       )
     `)
-    .eq('workspace_id', workspaceId!)
+    .eq('workspace_id', workspaceId)
     .order('created_at', { ascending: false })
     .limit(5)
 
@@ -59,7 +76,7 @@ export default async function DashboardPage() {
   const { count: activeOnboardingsCount } = await (supabase
     .from('client_onboardings') as any)
     .select('*, clients!inner(*)', { count: 'exact', head: true })
-    .eq('clients.workspace_id', workspaceId!)
+    .eq('clients.workspace_id', workspaceId)
     .eq('status', 'IN_PROGRESS')
 
   return (
