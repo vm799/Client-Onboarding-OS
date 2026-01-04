@@ -12,8 +12,8 @@ export async function GET(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { data: flow, error } = await supabase
-    .from('onboarding_flows')
+  const { data: flow, error } = await (supabase
+    .from('onboarding_flows') as any)
     .select(`
       *,
       steps:onboarding_steps(*)
@@ -106,8 +106,8 @@ export async function DELETE(
 
   try {
     // Check if flow has active onboardings
-    const { data: activeOnboardings } = await supabase
-      .from('client_onboardings')
+    const { data: activeOnboardings } = await (supabase
+      .from('client_onboardings') as any)
       .select('id')
       .eq('flow_id', params.id)
       .in('status', ['NOT_STARTED', 'IN_PROGRESS'])
@@ -121,8 +121,8 @@ export async function DELETE(
     }
 
     // Delete the flow (steps cascade automatically)
-    const { error } = await supabase
-      .from('onboarding_flows')
+    const { error } = await (supabase
+      .from('onboarding_flows') as any)
       .delete()
       .eq('id', params.id)
 

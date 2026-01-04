@@ -12,8 +12,8 @@ export async function GET(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { data: client, error } = await supabase
-    .from('clients')
+  const { data: client, error } = await (supabase
+    .from('clients') as any)
     .select(`
       *,
       client_onboardings(
@@ -82,8 +82,8 @@ export async function DELETE(
 
   try {
     // Delete the client (onboardings cascade automatically)
-    const { error } = await supabase
-      .from('clients')
+    const { error } = await (supabase
+      .from('clients') as any)
       .delete()
       .eq('id', params.id)
 

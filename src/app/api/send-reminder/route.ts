@@ -26,8 +26,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Get client with onboarding details
-    const { data: client, error: clientError } = await supabase
-      .from('clients')
+    const { data: client, error: clientError } = await (supabase
+      .from('clients') as any)
       .select(`
         id,
         name,

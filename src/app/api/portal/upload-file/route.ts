@@ -102,8 +102,8 @@ export async function POST(request: NextRequest) {
     const supabase = createAdminClient()
 
     // Verify the token matches the onboarding
-    const { data: onboarding, error: onboardingError } = await supabase
-      .from('client_onboardings')
+    const { data: onboarding, error: onboardingError } = await (supabase
+      .from('client_onboardings') as any)
       .select('id, client_id')
       .eq('onboarding_link_token', token)
       .single()
@@ -116,8 +116,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify the step progress belongs to this onboarding
-    const { data: stepProgress, error: stepError } = await supabase
-      .from('client_step_progress')
+    const { data: stepProgress, error: stepError } = await (supabase
+      .from('client_step_progress') as any)
       .select('id')
       .eq('id', stepProgressId)
       .eq('client_onboarding_id', onboarding.id)
@@ -183,8 +183,8 @@ export async function POST(request: NextRequest) {
       .getPublicUrl(filePath)
 
     // Update onboarding last activity
-    await supabase
-      .from('client_onboardings')
+    await (supabase
+      .from('client_onboardings') as any)
       .update({ last_activity_at: new Date().toISOString() })
       .eq('id', onboarding.id)
 

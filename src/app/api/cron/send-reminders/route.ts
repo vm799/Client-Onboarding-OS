@@ -28,8 +28,8 @@ export async function GET(request: NextRequest) {
     cutoffDate.setDate(cutoffDate.getDate() - INACTIVITY_DAYS)
 
     // Get onboardings that are in progress and haven't had activity in N days
-    const { data: onboardings, error } = await supabase
-      .from('client_onboardings')
+    const { data: onboardings, error } = await (supabase
+      .from('client_onboardings') as any)
       .select(`
         id,
         onboarding_link_token,
@@ -63,8 +63,8 @@ export async function GET(request: NextRequest) {
 
     for (const onboarding of onboardings as any[]) {
       // Check if we already sent a reminder recently (within 24 hours)
-      const { data: recentReminder } = await supabase
-        .from('notification_logs')
+      const { data: recentReminder } = await (supabase
+        .from('notification_logs') as any)
         .select('id')
         .eq('client_onboarding_id', onboarding.id)
         .eq('notification_type', 'reminder')

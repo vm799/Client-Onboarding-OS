@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
     const supabase = createAdminClient()
 
     // Verify the token matches the onboarding
-    const { data: onboarding, error: onboardingError } = await supabase
-      .from('client_onboardings')
+    const { data: onboarding, error: onboardingError } = await (supabase
+      .from('client_onboardings') as any)
       .select(`
         id,
         client_id,
@@ -46,8 +46,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify the step progress belongs to this onboarding
-    const { data: stepProgress, error: stepError } = await supabase
-      .from('client_step_progress')
+    const { data: stepProgress, error: stepError } = await (supabase
+      .from('client_step_progress') as any)
       .select('id, client_onboarding_id')
       .eq('id', stepProgressId)
       .eq('client_onboarding_id', onboarding.id)
@@ -61,8 +61,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Update the step progress
-    const { error: updateError } = await supabase
-      .from('client_step_progress')
+    const { error: updateError } = await (supabase
+      .from('client_step_progress') as any)
       .update({
         status: 'COMPLETED',
         data: data || {},
@@ -75,23 +75,23 @@ export async function POST(request: NextRequest) {
     }
 
     // Update onboarding last activity
-    await supabase
-      .from('client_onboardings')
+    await (supabase
+      .from('client_onboardings') as any)
       .update({ last_activity_at: new Date().toISOString() })
       .eq('id', onboarding.id)
 
     // Check if all steps are completed
-    const { data: allProgress } = await supabase
-      .from('client_step_progress')
+    const { data: allProgress } = await (supabase
+      .from('client_step_progress') as any)
       .select('status')
       .eq('client_onboarding_id', onboarding.id)
 
-    const allCompleted = allProgress?.every((p) => p.status === 'COMPLETED')
+    const allCompleted = allProgress?.every((p: any) => p.status === 'COMPLETED')
 
     if (allCompleted) {
       // Update onboarding status to completed
-      await supabase
-        .from('client_onboardings')
+      await (supabase
+        .from('client_onboardings') as any)
         .update({
           status: 'COMPLETED',
           completed_at: new Date().toISOString(),
@@ -101,16 +101,16 @@ export async function POST(request: NextRequest) {
       // Send completion notification email to provider
       try {
         // Get workspace owner email
-        const { data: workspaceMembers } = await supabase
-          .from('workspace_members')
+        const { data: workspaceMembers } = await (supabase
+          .from('workspace_members') as any)
           .select('user_id, role')
           .eq('workspace_id', (onboarding.flow as any)?.workspace?.id)
           .eq('role', 'owner')
           .limit(1)
 
         if (workspaceMembers && workspaceMembers.length > 0) {
-          const { data: ownerProfile } = await supabase
-            .from('profiles')
+          const { data: ownerProfile } = await (supabase
+            .from('profiles') as any)
             .select('email, name')
             .eq('id', workspaceMembers[0].user_id)
             .single()
